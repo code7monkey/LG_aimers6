@@ -1,0 +1,53 @@
+random_seed: 42
+n_splits: 5
+train_path: data/train.csv
+test_path: data/test.csv
+submission_sample_path: data/sample_submission.csv
+target_col: 임신 성공 여부
+
+# 모델별 하이퍼파라미터 설정
+models:
+  lgbm:
+    objective: binary
+    metric: auc
+    boosting_type: gbdt
+    learning_rate: 0.1
+    num_leaves: 31
+    random_state: 42
+  xgb:
+    objective: binary:logistic
+    eval_metric: auc
+    learning_rate: 0.1
+    max_depth: 6
+    n_estimators: 1000
+    random_state: 42
+    scale_pos_weight: null  # pos_weight 는 학습 중 자동 계산
+  cat:
+    loss_function: Logloss
+    eval_metric: AUC
+    learning_rate: 0.1
+    iterations: 1000
+    depth: 6
+    random_seed: 42
+    od_wait: 100
+    task_type: CPU
+    verbose: 200
+
+# 모델별로 학습에서 제외할 컬럼 설정
+drop_features:
+  lgbm: []
+  xgb: ['PGS 검사를 받고도 안한 사람']
+  cat: ['PGS 검사를 받고도 안한 사람']
+
+# 가중 랭크 앙상블 설정
+weighted_rank_ensemble:
+  n_select_folds: 3
+  weights:
+    lgbm: 1.3
+    xgb: 3
+    cat: 2.9
+
+# 출력 및 모델 저장 설정
+output_dir: outputs
+submission_filename: submission.csv
+model_dir: assets
